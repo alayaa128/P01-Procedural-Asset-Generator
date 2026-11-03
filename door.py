@@ -23,7 +23,7 @@ class Door():
     def create_frame(self):
         self.frame_obj, self.frame_node = cmds.polyCube(name="frame",
         height=self.door_height, width=self.door_width, depth=self.frame_depth)
-        cmds.delete('pCube4.f[1]')
+        cmds.polyDelFacet('frame.f[0]', 'frame.f[2]')
 
 door1 = Door()
 door1.create()

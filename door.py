@@ -23,7 +23,9 @@ class Door():
     def create_frame(self):
         self.frame_obj, self.frame_node = cmds.polyCube(name="frame",
         height=self.door_height, width=self.door_width, depth=self.frame_depth)
-        cmds.polyDelFacet('frame.f[0]', 'frame.f[2]')
+        cmds.polyDelFacet('frame.f[0]', 'frame.f[2]', 'frame.f[3]')
+        cmds.polyExtrudeFacet('frame.f[0]', 'frame.f[1]', 'frame.f[2]',
+            scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
 
 door1 = Door()
 door1.create()

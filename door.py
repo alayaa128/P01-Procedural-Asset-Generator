@@ -24,6 +24,7 @@ class Door():
         self.create_front_knob()
         self.create_back_knob()
         self.create_knob_connector()
+        self.create_lock()
 
         if self.create_frame_enabled:
             self.create_frame()
@@ -126,9 +127,15 @@ class Door():
         cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, -1.3*self.door_depth])
 
     def create_knob_connector(self):
-        self.knob_connector_obj = cmds.polyCylinder(name="Knob Connector", 
+        self.knob_connector_obj, self.knob_connector_node = cmds.polyCylinder(name="Knob Connector", 
         radius=(0.5*self.knob_radius), height=(1.7*self.door_depth))
         cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 0],
+        rotation=[90, 0, 0])
+
+    def create_lock(self):
+        self.lock_obj, self.lock_node, = cmds.polyCylinder(name="Door Lock",
+        radius=(0.5*self.knob_radius),height=(1.2*self.door_depth))
+        cmds.xform(translation=[0.4*self.door_width, 0.03*self.door_height, 0],
         rotation=[90, 0, 0])
 
     def create_frame(self):

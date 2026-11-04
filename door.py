@@ -14,8 +14,8 @@ class Door():
 
     def create_body(self):
         self.body_obj, self.body_node = cmds.polyCube(name="body",
-            height=self.door_height, width=self.door_width, depth=self.door_depth,
-            subdivisionsX=(2*self.door_width), subdivisionsY=(2*self.door_height))
+            height=self.door_height, width=self.door_width, 
+            depth=self.door_depth, subdivisionsX=(6), subdivisionsY=(14))
         
         #top left detail
         cmds.polyExtrudeFacet('body.f[67:68]','body.f[73:74]', 
@@ -112,3 +112,7 @@ class Door():
 door1 = Door()
 door1.create()
 
+door2 = Door()
+door2.door_height = 5
+door2.door_width = 2
+door2.create()

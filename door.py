@@ -112,7 +112,3 @@ class Door():
 door1 = Door()
 door1.create()
 
-door2 = Door()
-door2.door_height = 5
-door2.door_width = 2
-door2.create()

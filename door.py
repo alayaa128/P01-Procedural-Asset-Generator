@@ -26,6 +26,9 @@ class Door():
         cmds.polyDelFacet('frame.f[0]', 'frame.f[2]', 'frame.f[3]')
         cmds.polyExtrudeFacet('frame.f[0]', 'frame.f[1]', 'frame.f[2]',
             scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
+        cmds.polyMoveFacet('frame.f[11]', localRotateY=(-57.2))
+        cmds.polyMoveFacet('frame.f[8]', localRotateY=(57.2))
 
 door1 = Door()
 door1.create()
+

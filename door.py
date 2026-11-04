@@ -15,10 +15,13 @@ class Door():
         self.door_width = 3
         self.door_depth = 0.3
         self.frame_depth = 0.5
+        self.create_frame_enabled = True
 
     def create(self):
         self.create_body()
-        self.create_frame()
+
+        if self.create_frame_enabled:
+            self.create_frame()
 
     def create_body(self):
         self.body_obj, self.body_node = cmds.polyCube(name="body",
@@ -143,12 +146,18 @@ class DoorGUI(QtWidgets.QDialog):
         self.door_h_dspnbx = QtWidgets.QDoubleSpinBox()
         self.door_w_dspnbx = QtWidgets.QDoubleSpinBox()
         self.door_d_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.frame_d_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.frame_chk = QtWidgets.QCheckBox()
+        self.frame_chk.setChecked(True)
         self.door_h_dspnbx.setValue(7.0)
         self.door_w_dspnbx.setValue(3.0)
         self.door_d_dspnbx.setValue(0.3)
+        self.frame_d_dspnbx.setValue(0.5)
         self.form_lay.addRow("Door Height", self.door_h_dspnbx)
         self.form_lay.addRow("Door Width", self.door_w_dspnbx)
         self.form_lay.addRow("Door Depth", self.door_d_dspnbx)
+        self.form_lay.addRow("Frame Depth", self.frame_d_dspnbx)
+        self.form_lay.addRow("Create Door Frame", self.frame_chk)
         self.main_lay.addLayout(self.form_lay)
 
     def create_connections(self):
@@ -159,6 +168,8 @@ class DoorGUI(QtWidgets.QDialog):
         self.door_generator.door_height = self.door_h_dspnbx.value()
         self.door_generator.door_width = self.door_w_dspnbx.value()
         self.door_generator.door_depth = self.door_d_dspnbx.value()
+        self.door_generator.frame_depth = self.frame_d_dspnbx.value()
+        self.door_generator.create_frame_enabled = self.frame_chk.isChecked()
         self.door_generator.create()
 
 

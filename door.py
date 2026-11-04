@@ -8,6 +8,7 @@ from shiboken6 import wrapInstance
 import maya.OpenMayaUI as omui
 import maya.cmds as cmds
 
+
 class Door():
 
     def __init__(self):
@@ -16,9 +17,13 @@ class Door():
         self.door_depth = 0.3
         self.frame_depth = 0.5
         self.create_frame_enabled = True
+        self.knob_radius = 0.06*self.door_width
 
     def create(self):
         self.create_body()
+        self.create_front_knob()
+        self.create_back_knob()
+        self.create_knob_connector()
 
         if self.create_frame_enabled:
             self.create_frame()
@@ -110,8 +115,21 @@ class Door():
         f'{body}.f[147:148]', f'{body}.f[153:154]', f'{body}.f[159:160]', 
         f'{body}.f[165:166]', localTranslateZ=(0.05))
 
-    def create_handle(self):
-        pass
+    def create_front_knob(self):
+        self.knob_obj, self.knob_node = cmds.polySphere(name="f_knob", 
+        radius=(self.knob_radius))
+        cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 1.3*self.door_depth])
+
+    def create_back_knob(self):
+        self.knob_obj, self.knob_node = cmds.polySphere(name="b_knob", 
+        radius=(self.knob_radius))
+        cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, -1.3*self.door_depth])
+
+    def create_knob_connector(self):
+        self.knob_connector_obj = cmds.polyCylinder(name="Knob Connector", 
+        radius=(0.5*self.knob_radius), height=(1.7*self.door_depth))
+        cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 0],
+        rotation=[90, 0, 0])
 
     def create_frame(self):
         self.frame_obj, self.frame_node = cmds.polyCube(name="frame",
@@ -127,6 +145,7 @@ class Door():
 def get_main_maya_win():
     main_win = omui.MQtUtil.mainWindow()
     return wrapInstance(int(main_win), QtWidgets.QWidget)
+
 
 class DoorGUI(QtWidgets.QDialog):
 

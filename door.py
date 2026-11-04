@@ -141,8 +141,14 @@ class DoorGUI(QtWidgets.QDialog):
     def _form_ui(self):
         self.form_lay = QtWidgets.QFormLayout()
         self.door_h_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.door_w_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.door_d_dspnbx = QtWidgets.QDoubleSpinBox()
         self.door_h_dspnbx.setValue(7.0)
+        self.door_w_dspnbx.setValue(3.0)
+        self.door_d_dspnbx.setValue(0.3)
         self.form_lay.addRow("Door Height", self.door_h_dspnbx)
+        self.form_lay.addRow("Door Width", self.door_w_dspnbx)
+        self.form_lay.addRow("Door Depth", self.door_d_dspnbx)
         self.main_lay.addLayout(self.form_lay)
 
     def create_connections(self):
@@ -151,6 +157,8 @@ class DoorGUI(QtWidgets.QDialog):
     @QtCore.Slot()
     def create(self):
         self.door_generator.door_height = self.door_h_dspnbx.value()
+        self.door_generator.door_width = self.door_w_dspnbx.value()
+        self.door_generator.door_depth = self.door_d_dspnbx.value()
         self.door_generator.create()
 
 

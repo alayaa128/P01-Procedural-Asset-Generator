@@ -138,6 +138,7 @@ class Door():
         cmds.xform(translation=[0.4*self.door_width, 0.03*self.door_height, 0],
         rotation=[90, 0, 0])
 
+
     def create_frame(self):
         self.frame_obj, self.frame_node = cmds.polyCube(name="frame",
         height=self.door_height, width=self.door_width, depth=self.frame_depth)
@@ -145,9 +146,9 @@ class Door():
         cmds.polyDelFacet(f'{frame}.f[0]', f'{frame}.f[2]', f'{frame}.f[3]')
         cmds.polyExtrudeFacet(f'{frame}.f[0]', f'{frame}.f[1]', f'{frame}.f[2]',
         scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
-        cmds.polyMoveFacet(f'{frame}.f[11]', localRotateY=(-57.2))
-        cmds.polyMoveFacet(f'{frame}.f[8]', localRotateY=(57.2))
-
+        cmds.polyMoveEdge(f'{frame}.e[9]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
+        cmds.polyMoveEdge(f'{frame}.e[8]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
+        
 
 def get_main_maya_win():
     main_win = omui.MQtUtil.mainWindow()

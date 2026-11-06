@@ -50,9 +50,15 @@ class Door():
         for obj in knob_objs + lock_objs:
             cmds.sets(obj, edit=True, forceElement=metal_sg)
 
-        door_grp = cmds.group(door_objs + frame_objs, name="Door")
+        door_full_grp = cmds.group(frame_objs, name="Door")
+        door_grp = cmds.group(door_objs, name="Door", parent=door_full_grp)
+        cmds.xform(door_grp, worldSpace=True,
+                   rotatePivot=(-0.5*self.door_width, 0, 0), preserve=True)
         knob_grp = cmds.group(knob_objs + lock_objs, name="Knobs",
                               parent=door_grp)
+
+        if self.create_anim_enabled:
+            self.door_animation(door_grp)
 
         return door_grp, knob_grp
 

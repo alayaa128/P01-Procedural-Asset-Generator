@@ -19,6 +19,7 @@ class Door():
         self.knob_radius = 0.06*self.door_width
         self.create_frame_enabled = True
         self.create_lock_enabled = True
+        self.create_anim_enabled = False
 
     def create(self):
         door_objs = []
@@ -39,6 +40,11 @@ class Door():
         cmds.group(knob, name="Door Knobs", parent=f"{door_grp}")
         cmds.xform(door_grp, worldSpace=True, 
             rotatePivot=(-0.5*self.door_width, 0, 0), preserve=True)
+
+        if self.create_anim_enabled:
+            self.door_animation(door_grp)
+
+        return door_grp
 
     def create_body(self):
         self.body_obj, self.body_node = cmds.polyCube(name="body",
@@ -171,14 +177,13 @@ class Door():
 
         return self.frame_obj
 
-    def door_animation(self):
-        door = "Door"
+    def door_animation(self, door_grp):
         start_frame = 0
         end_frame = 48
 
-        cmds.setKeyframe(door, attribute="rotateY", value=0, time=start_frame)
-        cmds.setKeyframe(door, attribute="rorateY", value=90, time=end_frame)
-        cmds.keyTangent(door, attribute="rotateY", inTangentType="auto", outTangentType="auto")
+        cmds.setKeyframe(door_grp, attribute="rotateY", value=0, time=start_frame)
+        cmds.setKeyframe(door_grp, attribute="rotateY", value=90, time=end_frame)
+        cmds.keyTangent(door_grp, attribute="rotateY", inTangentType="auto", outTangentType="auto")
         cmds.playbackOptions(min=start_frame, max=end_frame)
 
 
@@ -239,6 +244,7 @@ class DoorGUI(QtWidgets.QDialog):
         self.door_generator.frame_depth = self.frame_d_dspnbx.value()
         self.door_generator.create_frame_enabled = self.frame_chk.isChecked()
         self.door_generator.create_lock_enabled = self.lock_chk.isChecked()
+        self.door_generator.create_anim_enabled = self.anim_chk.isChecked()
         self.door_generator.create()
 
 

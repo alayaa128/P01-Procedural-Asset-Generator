@@ -171,6 +171,17 @@ class Door():
 
         return self.frame_obj
 
+    def door_animation(self):
+        door = "Door"
+        start_frame = 0
+        end_frame = 48
+
+        cmds.setKeyframe(door, attribute="rotateY", value=0, time=start_frame)
+        cmds.setKeyframe(door, attribute="rorateY", value=90, time=end_frame)
+        cmds.keyTangent(door, attribute="rotateY", inTangentType="auto", outTangentType="auto")
+        cmds.playbackOptions(min=start_frame, max=end_frame)
+
+
 def get_main_maya_win():
     main_win = omui.MQtUtil.mainWindow()
     return wrapInstance(int(main_win), QtWidgets.QWidget)
@@ -200,8 +211,10 @@ class DoorGUI(QtWidgets.QDialog):
         self.frame_d_dspnbx = QtWidgets.QDoubleSpinBox()
         self.frame_chk = QtWidgets.QCheckBox()
         self.lock_chk = QtWidgets.QCheckBox()
+        self.anim_chk = QtWidgets.QCheckBox()
         self.frame_chk.setChecked(True)
         self.lock_chk.setChecked(True)
+        self.anim_chk.setChecked(False)
         self.door_h_dspnbx.setValue(7.0)
         self.door_w_dspnbx.setValue(3.0)
         self.door_d_dspnbx.setValue(0.3)
@@ -212,6 +225,7 @@ class DoorGUI(QtWidgets.QDialog):
         self.form_lay.addRow("Frame Depth", self.frame_d_dspnbx)
         self.form_lay.addRow("Create Door Frame", self.frame_chk)
         self.form_lay.addRow("Create Lock", self.lock_chk)
+        self.form_lay.addRow("Add Animation", self.anim_chk)
         self.main_lay.addLayout(self.form_lay)
 
     def create_connections(self):

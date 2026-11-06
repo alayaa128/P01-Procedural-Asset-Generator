@@ -19,19 +19,26 @@ class Door():
         self.knob_radius = 0.06*self.door_width
         self.create_frame_enabled = True
         self.create_lock_enabled = True
-        
 
     def create(self):
-        self.create_body()
-        self.create_front_knob()
-        self.create_back_knob()
-        self.create_knob_connector()
-
+        door_objs = []
+        knob = []
+        door_objs.append(self.create_body())
+        knob.append(self.create_front_knob())
+        knob.append(self.create_back_knob())
+        knob.append(self.create_knob_connector())
+        
+        
         if self.create_frame_enabled:
             self.create_frame()
 
         if self.create_lock_enabled:
-            self.create_lock()
+            door_objs.append(self.create_lock())
+
+        door_grp = cmds.group(door_objs, name='Door')
+        cmds.group(knob, name="Door Knobs", parent=f"{door_grp}")
+        cmds.xform(door_grp, worldSpace=True, 
+            rotatePivot=(-0.5*self.door_width, 0, 0), preserve=True)
 
     def create_body(self):
         self.body_obj, self.body_node = cmds.polyCube(name="body",
@@ -120,31 +127,40 @@ class Door():
         f'{body}.f[147:148]', f'{body}.f[153:154]', f'{body}.f[159:160]', 
         f'{body}.f[165:166]', localTranslateZ=(0.05))
 
+        return body
+
     def create_front_knob(self):
         self.knob_obj, self.knob_node = cmds.polySphere(name="f_knob", 
         radius=(self.knob_radius))
         cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 1.3*self.door_depth])
 
+        return self.knob_obj
+    
     def create_back_knob(self):
         self.knob_obj, self.knob_node = cmds.polySphere(name="b_knob", 
         radius=(self.knob_radius))
         cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, -1.3*self.door_depth])
 
+        return self.knob_obj
+    
     def create_knob_connector(self):
         self.knob_connector_obj, self.knob_connector_node = cmds.polyCylinder(name="Knob Connector", 
         radius=(0.5*self.knob_radius), height=(1.7*self.door_depth))
         cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 0],
         rotation=[90, 0, 0])
 
+        return self.knob_connector_obj
+    
     def create_lock(self):
         self.lock_obj, self.lock_node, = cmds.polyCylinder(name="Door Lock",
         radius=(0.5*self.knob_radius),height=(1.2*self.door_depth))
         cmds.xform(translation=[0.4*self.door_width, 0.03*self.door_height, 0],
         rotation=[90, 0, 0])
 
+        return self.lock_obj
 
     def create_frame(self):
-        self.frame_obj, self.frame_node = cmds.polyCube(name="frame",
+        self.frame_obj, self.frame_node = cmds.polyCube(name="Door Frame",
         height=self.door_height, width=self.door_width, depth=self.frame_depth)
         frame = self.frame_obj
         cmds.polyDelFacet(f'{frame}.f[0]', f'{frame}.f[2]', f'{frame}.f[3]')
@@ -152,7 +168,8 @@ class Door():
         scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
         cmds.polyMoveEdge(f'{frame}.e[9]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
         cmds.polyMoveEdge(f'{frame}.e[8]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
-        
+
+        return self.frame_obj
 
 def get_main_maya_win():
     main_win = omui.MQtUtil.mainWindow()

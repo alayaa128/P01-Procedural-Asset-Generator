@@ -37,7 +37,7 @@ class Door():
             frame_objs.append(self.create_frame())
 
         if self.create_lock_enabled:
-            door_objs.append(self.create_lock())
+            lock_objs.append(self.create_lock())
 
         wood_sg = self.wood_material()
         metal_sg = self.metal_material()
@@ -243,17 +243,20 @@ class Door():
 
         return frame_sg
 
-    def get_main_maya_win():
-        main_win = omui.MQtUtil.mainWindow()
-        return wrapInstance(int(main_win), QtWidgets.QWidget)
+
+def get_main_maya_win():
+    main_win = omui.MQtUtil.mainWindow()
+    return wrapInstance(int(main_win), QtWidgets.QWidget)
 
 
 class DoorGUI(QtWidgets.QDialog):
 
     def __init__(self):
-        super().__init__()
+        super().__init__(get_main_maya_win())
         self.door_generator = Door()
         self.setWindowTitle("Procedural Door")
+        self.setWindowFlags(self.windowFlags() |
+                            QtCore.Qt.WindowType.WindowStaysOnTopHint)
         self.create_layout()
         self.create_connections()
 

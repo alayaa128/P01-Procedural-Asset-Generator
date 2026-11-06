@@ -32,7 +32,7 @@ class Door():
         back_knob = self.create_back_knob()
         connector = self.create_knob_connector()
         knob_objs.extend([front_knob, back_knob, connector])
-        
+
         if self.create_frame_enabled:
             frame_objs.append(self.create_frame())
 
@@ -42,17 +42,17 @@ class Door():
         wood_sg = self.wood_material()
         metal_sg = self.metal_material()
         frame_sg = self.frame_material()
-        
+
         for obj in frame_objs:
             cmds.sets(obj, edit=True, forceElement=frame_sg)
         for obj in door_objs:
             cmds.sets(obj, edit=True, forceElement=wood_sg)
         for obj in knob_objs + lock_objs:
             cmds.sets(obj, edit=True, forceElement=metal_sg)
-        
 
         door_grp = cmds.group(door_objs + frame_objs, name="Door")
-        knob_grp = cmds.group(knob_objs + lock_objs, name="Knobs", parent=door_grp)
+        knob_grp = cmds.group(knob_objs + lock_objs, name="Knobs",
+                              parent=door_grp)
 
         return door_grp, knob_grp
 
@@ -63,7 +63,7 @@ class Door():
 
         body = self.body_obj
 
-        #top left detail
+        # top left detail
         cmds.polyExtrudeFacet(f'{body}.f[67:68]', f'{body}.f[73:74]', 
         f'{body}.f[97:98]', f'{body}.f[103:104]', offset=(0.05))
         cmds.polyExtrudeFacet(f'{body}.f[67:68]', f'{body}.f[73:74]', 
@@ -73,7 +73,7 @@ class Door():
         cmds.polyExtrudeFacet(f'{body}.f[67:68]', f'{body}.f[73:74]', 
         f'{body}.f[97:98]', f'{body}.f[103:104]', localTranslateZ=(0.05))
 
-        #top right detail
+        # top right detail
         cmds.polyExtrudeFacet(f'{body}.f[69:70]', f'{body}.f[75:76]',
         f'{body}.f[99:100]', f'{body}.f[105:106]', offset=(0.05), )
         cmds.polyExtrudeFacet(f'{body}.f[69:70]', f'{body}.f[75:76]',
@@ -83,7 +83,7 @@ class Door():
         cmds.polyExtrudeFacet(f'{body}.f[69:70]', f'{body}.f[75:76]',
         f'{body}.f[99:100]', f'{body}.f[105:106]', localTranslateZ=(0.05))
 
-        #middle left detail
+        # middle left detail
         cmds.polyExtrudeFacet(f'{body}.f[37:38]', f'{body}.f[43:44]', 
         f'{body}.f[49:50]', f'{body}.f[55:56]', f'{body}.f[115:116]', f'{body}.f[121:122]', 
         f'{body}.f[127:128]', f'{body}.f[133:134]', offset=(0.05))
@@ -97,7 +97,7 @@ class Door():
         f'{body}.f[49:50]', f'{body}.f[55:56]', f'{body}.f[115:116]', f'{body}.f[121:122]', 
         f'{body}.f[127:128]', f'{body}.f[133:134]', localTranslateZ=(0.05))
 
-        #middle right detail
+        # middle right detail
         cmds.polyExtrudeFacet(f'{body}.f[39:40]', f'{body}.f[45:46]', f'{body}.f[51:52]', 
         f'{body}.f[57:58]', f'{body}.f[117:118]', f'{body}.f[123:124]', 
         f'{body}.f[129:130]', f'{body}.f[135:136]', offset=(0.05))
@@ -111,7 +111,7 @@ class Door():
         f'{body}.f[57:58]', f'{body}.f[117:118]', f'{body}.f[123:124]', 
         f'{body}.f[129:130]', f'{body}.f[135:136]', localTranslateZ=(0.05))
 
-        #bottom left detail
+        # bottom left detail
         cmds.polyExtrudeFacet(f'{body}.f[7:8]', f'{body}.f[13:14]', f'{body}.f[19:20]', 
         f'{body}.f[25:26]', f'{body}.f[145:146]', f'{body}.f[151:152]', 
         f'{body}.f[157:158]', f'{body}.f[163:164]', offset=(0.05))
@@ -125,7 +125,7 @@ class Door():
         f'{body}.f[25:26]', f'{body}.f[145:146]', f'{body}.f[151:152]', 
         f'{body}.f[157:158]', f'{body}.f[163:164]', localTranslateZ=(0.05))
 
-        #bottom right detail
+        # bottom right detail
         cmds.polyExtrudeFacet(f'{body}.f[9:10]', f'{body}.f[15:16]', 
         f'{body}.f[21:22]', f'{body}.f[27:28]',
         f'{body}.f[147:148]', f'{body}.f[153:154]', f'{body}.f[159:160]', 
@@ -152,7 +152,7 @@ class Door():
         -0.03*self.door_height, 1.3*self.door_depth])
 
         return self.knob_obj
-    
+
     def create_back_knob(self):
         self.knob_obj, self.knob_node = cmds.polySphere(name="b_knob", 
         radius=(self.knob_radius))
@@ -160,7 +160,7 @@ class Door():
         -0.03*self.door_height, -1.3*self.door_depth])
 
         return self.knob_obj
-    
+
     def create_knob_connector(self):
         self.knob_connector_obj, self.knob_connector_node = cmds.polyCylinder(name="Knob Connector", 
         radius=(0.5*self.knob_radius), height=(1.7*self.door_depth))
@@ -168,7 +168,7 @@ class Door():
         rotation=[90, 0, 0])
 
         return self.knob_connector_obj
-    
+
     def create_lock(self):
         self.lock_obj, self.lock_node, = cmds.polyCylinder(name="Door Lock",
         radius=(0.5*self.knob_radius),height=(1.2*self.door_depth))
@@ -183,9 +183,13 @@ class Door():
         frame = self.frame_obj
         cmds.polyDelFacet(f'{frame}.f[0]', f'{frame}.f[2]', f'{frame}.f[3]')
         cmds.polyExtrudeFacet(f'{frame}.f[0]', f'{frame}.f[1]', f'{frame}.f[2]',
-        scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
-        cmds.polyMoveEdge(f'{frame}.e[9]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
-        cmds.polyMoveEdge(f'{frame}.e[8]', translateY=((-0.55*self.door_height)+(0.5*self.door_height)))
+                              scale=(1.15, 1.1, 1.15), keepFacesTogether=True)
+        cmds.polyMoveEdge(f'{frame}.e[9]',
+                          translateY=((-0.55*self.door_height) +
+                                      (0.5*self.door_height)))
+        cmds.polyMoveEdge(f'{frame}.e[8]',
+                          translateY=((-0.55*self.door_height) +
+                                      (0.5*self.door_height)))
 
         return self.frame_obj
 
@@ -193,28 +197,32 @@ class Door():
         start_frame = 0
         end_frame = 48
 
-        cmds.setKeyframe(door_grp, attribute="rotateY", value=0, time=start_frame)
-        cmds.setKeyframe(door_grp, attribute="rotateY", value=90, time=end_frame)
-        cmds.keyTangent(door_grp, attribute="rotateY", inTangentType="auto", outTangentType="auto")
+        cmds.setKeyframe(door_grp, attribute="rotateY", value=0,
+                         time=start_frame)
+        cmds.setKeyframe(door_grp, attribute="rotateY", value=90,
+                         time=end_frame)
+        cmds.keyTangent(door_grp, attribute="rotateY", inTangentType="auto",
+                        outTangentType="auto")
         cmds.playbackOptions(min=start_frame, max=end_frame)
 
     def wood_material(self):
 
-        wood_mat = cmds.shadingNode("blinn", asShader=True, 
-        name="Wood")
-        wood_sg = cmds.sets(renderable=True, noSurfaceShader=True, empty=True, name="Wood_SG")
+        wood_mat = cmds.shadingNode("blinn", asShader=True,
+                                    name="Wood")
+        wood_sg = cmds.sets(renderable=True, noSurfaceShader=True,
+                            empty=True, name="Wood_SG")
 
         cmds.connectAttr(wood_mat + ".outColor", wood_sg + ".surfaceShader")
         cmds.setAttr(wood_mat + ".color", 0.50, 0.20, 0.09, type="double3")
         cmds.setAttr(wood_mat + ".eccentricity", 0.7)
-       
+
         return wood_sg
 
     def metal_material(self):
 
         metal_mat = cmds.shadingNode("blinn", asShader=True, name="Door_Metal")
-        metal_sg = cmds.sets(renderable=True, noSurfaceShader=True, 
-        empty=True, name="Door_Metal_SG")
+        metal_sg = cmds.sets(renderable=True, noSurfaceShader=True,
+                             empty=True, name="Door_Metal_SG")
 
         cmds.connectAttr(metal_mat + ".outColor", metal_sg + ".surfaceShader")
         cmds.setAttr(metal_mat + ".color", 0.65, 0.45, 0.45, type="double3")
@@ -224,16 +232,17 @@ class Door():
 
     def frame_material(self):
 
-        frame_mat = cmds.shadingNode("blinn", asShader=True, name="Frame Material")
-        frame_sg = cmds.sets(renderable=True, noSurfaceShader=True, 
-        empty=True, name="Frame_Material_SG")
+        frame_mat = cmds.shadingNode("blinn", asShader=True,
+                                     name="Frame Material")
+        frame_sg = cmds.sets(renderable=True, noSurfaceShader=True,
+                             empty=True, name="Frame_Material_SG")
 
         cmds.connectAttr(frame_mat + ".outColor", frame_sg + ".surfaceShader")
         cmds.setAttr(frame_mat + ".color", 0.10, 0.25, 0.50, type="double3")
         cmds.setAttr(frame_mat + ".eccentricity", 0.7)
 
         return frame_sg
-    
+
     def get_main_maya_win():
         main_win = omui.MQtUtil.mainWindow()
         return wrapInstance(int(main_win), QtWidgets.QWidget)

@@ -23,28 +23,38 @@ class Door():
 
     def create(self):
         door_objs = []
-        knob = []
-        door_objs.append(self.create_body())
-        knob.append(self.create_front_knob())
-        knob.append(self.create_back_knob())
-        knob.append(self.create_knob_connector())
-        
+        knob_objs = []
+        lock_objs = []
+        frame_objs = []
+        body = self.create_body()
+        door_objs.append(body)
+        front_knob = self.create_front_knob()
+        back_knob = self.create_back_knob()
+        connector = self.create_knob_connector()
+        knob_objs.extend([front_knob, back_knob, connector])
         
         if self.create_frame_enabled:
-            self.create_frame()
+            frame_objs.append(self.create_frame())
 
         if self.create_lock_enabled:
             door_objs.append(self.create_lock())
 
-        door_grp = cmds.group(door_objs, name='Door')
-        cmds.group(knob, name="Door Knobs", parent=f"{door_grp}")
-        cmds.xform(door_grp, worldSpace=True, 
-            rotatePivot=(-0.5*self.door_width, 0, 0), preserve=True)
+        wood_sg = self.wood_material()
+        metal_sg = self.metal_material()
+        frame_sg = self.frame_material()
+        
+        for obj in frame_objs:
+            cmds.sets(obj, edit=True, forceElement=frame_sg)
+        for obj in door_objs:
+            cmds.sets(obj, edit=True, forceElement=wood_sg)
+        for obj in knob_objs + lock_objs:
+            cmds.sets(obj, edit=True, forceElement=metal_sg)
+        
 
-        if self.create_anim_enabled:
-            self.door_animation(door_grp)
+        door_grp = cmds.group(door_objs + frame_objs, name="Door")
+        knob_grp = cmds.group(knob_objs + lock_objs, name="Knobs", parent=door_grp)
 
-        return door_grp
+        return door_grp, knob_grp
 
     def create_body(self):
         self.body_obj, self.body_node = cmds.polyCube(name="body",
@@ -138,14 +148,16 @@ class Door():
     def create_front_knob(self):
         self.knob_obj, self.knob_node = cmds.polySphere(name="f_knob", 
         radius=(self.knob_radius))
-        cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, 1.3*self.door_depth])
+        cmds.xform(translation=[0.4*self.door_width, 
+        -0.03*self.door_height, 1.3*self.door_depth])
 
         return self.knob_obj
     
     def create_back_knob(self):
         self.knob_obj, self.knob_node = cmds.polySphere(name="b_knob", 
         radius=(self.knob_radius))
-        cmds.xform(translation=[0.4*self.door_width, -0.03*self.door_height, -1.3*self.door_depth])
+        cmds.xform(translation=[0.4*self.door_width, 
+        -0.03*self.door_height, -1.3*self.door_depth])
 
         return self.knob_obj
     
@@ -186,10 +198,45 @@ class Door():
         cmds.keyTangent(door_grp, attribute="rotateY", inTangentType="auto", outTangentType="auto")
         cmds.playbackOptions(min=start_frame, max=end_frame)
 
+    def wood_material(self):
 
-def get_main_maya_win():
-    main_win = omui.MQtUtil.mainWindow()
-    return wrapInstance(int(main_win), QtWidgets.QWidget)
+        wood_mat = cmds.shadingNode("blinn", asShader=True, 
+        name="Wood")
+        wood_sg = cmds.sets(renderable=True, noSurfaceShader=True, empty=True, name="Wood_SG")
+
+        cmds.connectAttr(wood_mat + ".outColor", wood_sg + ".surfaceShader")
+        cmds.setAttr(wood_mat + ".color", 0.50, 0.20, 0.09, type="double3")
+        cmds.setAttr(wood_mat + ".eccentricity", 0.7)
+       
+        return wood_sg
+
+    def metal_material(self):
+
+        metal_mat = cmds.shadingNode("blinn", asShader=True, name="Door_Metal")
+        metal_sg = cmds.sets(renderable=True, noSurfaceShader=True, 
+        empty=True, name="Door_Metal_SG")
+
+        cmds.connectAttr(metal_mat + ".outColor", metal_sg + ".surfaceShader")
+        cmds.setAttr(metal_mat + ".color", 0.65, 0.45, 0.45, type="double3")
+        cmds.setAttr(metal_mat + ".eccentricity", 0.15)
+
+        return metal_sg
+
+    def frame_material(self):
+
+        frame_mat = cmds.shadingNode("blinn", asShader=True, name="Frame Material")
+        frame_sg = cmds.sets(renderable=True, noSurfaceShader=True, 
+        empty=True, name="Frame_Material_SG")
+
+        cmds.connectAttr(frame_mat + ".outColor", frame_sg + ".surfaceShader")
+        cmds.setAttr(frame_mat + ".color", 0.10, 0.25, 0.50, type="double3")
+        cmds.setAttr(frame_mat + ".eccentricity", 0.7)
+
+        return frame_sg
+    
+    def get_main_maya_win():
+        main_win = omui.MQtUtil.mainWindow()
+        return wrapInstance(int(main_win), QtWidgets.QWidget)
 
 
 class DoorGUI(QtWidgets.QDialog):
